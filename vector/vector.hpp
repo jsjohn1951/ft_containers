@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/09 00:59:31 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 02:06:06 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "vectorIterator.hpp"
 # include "revIterator.hpp"
 # include "../utils/type_traits.hpp"
+# include "../utils/exceptions.hpp"
 
 namespace ft
 {
@@ -51,22 +52,17 @@ namespace ft
 			//! Constructors
 			explicit vector(const allocator_type& allocator = allocator_type()) : Data(NULL), Alloc(allocator), Size(0), Capacity(0){}
 
-			// explicit vector(size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): Alloc(alloc), Size(n), Capacity(n)
-			// {
-			// 	this->Data = Alloc.allocate(n);
-			// 	for (size_type i = 0; i < this->size(); i++)
-			// 		this->Alloc.construct(this->Data + i, val);
-			// }
+			explicit vector(size_type n, const value_type& val = value_type(),
+				const allocator_type& alloc = allocator_type()): Alloc(alloc), Size(n), Capacity(n)
+			{ this->assign(n, val); }
 
-			// template <class InputIterator>
-			// explicit vector(InputIterator start, InputIterator end, const allocator_type& allocator = allocator_type(),
-			// 	typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
-			// {
-			// }
+			template <class InputIterator>
+			explicit vector(InputIterator start, InputIterator end, const allocator_type& allocator = allocator_type(),
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
+			{ this->assign(start, end); }
 
-			// vector(const vector &vec) : Data(NULL), Alloc(vec.get_allocator()), Size(vec.size()), Capacity(vec.size())
-			// {
-			// }
+			vector(const vector &vec) : Data(this->cpy_arr(vec)), Alloc(vec.get_allocator()),
+				Size(vec.size()), Capacity(vec.size()) {}
 
 			//! End Constructors
 
@@ -78,13 +74,17 @@ namespace ft
 	
 		//? ------------------------------------------- Operators ------------------------------------------- ?//
 
-			// vector		&operator=(const vector &vec)
-			// {
-			// 	if (this != &vec)
-			// 	{
-			// 	}
-			// 	return (*this);
-			// }
+			vector		&operator=(const vector &vec)
+			{
+				if (this != &vec)
+				{
+					this->destroyData();
+					this->Data = this->cpy_arr(vec);
+					this->Size = vec.size();
+					this->Capacity = vec.capacity();
+				}
+				return (*this);
+			}
 
 			reference	operator[](size_type n)
 			{
@@ -98,8 +98,6 @@ namespace ft
 
 		//? ------------------------------------------- End Operators ------------------------------------------- ?//
 
-
-			//* ---------- Getters ---------- *//
 
 			size_type	size() const
 			{
@@ -198,6 +196,14 @@ namespace ft
 
 		private :
 
+			pointer		cpy_arr(const vector &x)
+			{
+				pointer	tmp_data = x.get_allocator().allocate(x.capacity());
+				for (size_type i = 0; i < x.size(); i++)
+					x.get_allocator().construct(tmp_data + i, x.operator[](i));
+				return (tmp_data);
+			}
+
 			pointer		destroyData()
 			{
 				size_type	n = this->Size;
@@ -210,6 +216,8 @@ namespace ft
 
 			size_type	vector_arithmatic(size_type current, size_type required)
 			{
+				if (required > this->max_size())
+					throw (ft::length_error("ft::vector"));
 				if (current)
 					while (current < required)
 						current *= 2;
@@ -220,11 +228,6 @@ namespace ft
 			
 		public :
 
-			/*
-			*	@required :
-			*		resize
-			*		swap
-			*/
 			void		push_back(const value_type& val)
 			{
 				if (this->size() == this->capacity())
@@ -236,15 +239,14 @@ namespace ft
 
 			void		pop_back()
 			{
-				if (this->size())
-				{
-					this->Size--;
-					this->Alloc.destroy(this->Data + this->size());
-				}
+				this->Size--;
+				this->Alloc.destroy(this->Data + this->size());
 			}
 
 			void		reserve(size_type n)
 			{
+				if (n > this->max_size())
+					throw (ft::length_error("ft::vector"));
 				if (this->capacity() < n)
 				{
 					if (!this->capacity())
@@ -265,6 +267,7 @@ namespace ft
 
 			void		assign(size_type n, const value_type& val)
 			{
+				this->reserve(n);
 				this->clear();
 				for (size_type i = 0; i < n; i++)
 					this->push_back(val);
@@ -274,6 +277,8 @@ namespace ft
 			void		assign(InputIterator first, InputIterator last,
 				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
+				difference_type n = last - first;
+				this->reserve(n);
 				this->clear();
 				for (; first != last; first++)
 					this->push_back(*first);
@@ -322,6 +327,7 @@ namespace ft
 				difference_type	fOffset = position - this->begin();
 				difference_type	bOffset = this->end() - position;
 
+				std::cout << this->capacity() << std::endl;
 				this->reserve(vector_arithmatic(this->capacity(), this->size() + n));
 				if (atEnd)
 					for (; n; n--)
@@ -338,6 +344,8 @@ namespace ft
 
 			/*
 			*	@brief : Range insert inserts a range of elements using the first and last iterators
+			*	@note :
+			*			An iterator contain a pointer that points to an element in the array.
 			*	@index :
 			*			fOffset - is the offset between position and the begining of the array
 			?				@use :
@@ -357,7 +365,9 @@ namespace ft
 			?					and to insert the new elements
 			*
 			*	@note :
-			*		
+			*		because reserve may cause the reallocation of the array, any pre initialized
+			*		pointer involvement becomes useless. A solution is to calculate all the indexes before-hand and
+			*		use the indexes in the arithmatic. Which also proves to be faster. 
 			*/
 			template <class InputIterator>
 			void	insert(iterator position, InputIterator first, InputIterator last,
@@ -368,7 +378,7 @@ namespace ft
 				difference_type	bOffset = this->end() - position;
 				size_type		n = static_cast<size_type>(last - first);
 
-				this->reserve(vector_arithmatic(this->capacity(), this->size() + n));
+				this->reserve(this->vector_arithmatic(this->capacity(), this->size() + n));
 				if (atEnd)
 					for (; n; n--, first++)
 						this->push_back(*first);
@@ -380,6 +390,33 @@ namespace ft
 							this->operator[](fOffset + bOffset - 1) : *(--last));
 					this->Size += n;
 				}
+			}
+
+			void	resize(size_type n, value_type val = value_type())
+			{
+				this->reserve(vector_arithmatic(this->capacity(), n));
+				while (n > this->size())
+					this->push_back(val);
+				while (n < this->size())
+					this->pop_back();
+			}
+
+			void	swap(vector& x)
+			{
+				pointer			tmp_data = this->Data;
+				size_type		tmp_size = this->size();
+				size_type		tmp_cap = this->capacity();
+				allocator_type	tmp_alloc = this->get_allocator();
+
+				this->Data = x.Data;
+				this->Size = x.size();
+				this->Capacity = x.capacity();
+				this->Alloc = x.get_allocator();
+
+				x.Data = tmp_data;
+				x.Size = tmp_size;
+				x.Capacity = tmp_cap;
+				x.Alloc = tmp_alloc;
 			}
 	};
 		/*

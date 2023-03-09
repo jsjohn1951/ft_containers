@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 23:33:52 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/09 00:53:27 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 02:05:20 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 
 int	main(void)
 {
-	ft::vector<int>	vec;
-	ft::vector<int>::iterator it;
+	std::vector<int>	vec;
+	std::vector<int>::iterator it;
 
 	vec.push_back(12);
 	vec.push_back(9);
@@ -26,11 +26,15 @@ int	main(void)
 	vec.push_back(42);
 	vec.push_back(2);
 	
-	ft::vector<int>	vec2;
+	std::vector<int>	vec2;
+	
+	vec2.assign(vec.begin(), vec.end());
 
-	vec2.push_back(-9);
-	vec2.push_back(-10);
-	vec2.push_back(-8);
+	// vec2.push_back(-9);
+	// vec2.push_back(-10);
+	// vec2.push_back(-8);
+
+	// vec2 = vec;
 	
 	std::cout << "vec2 capacity: " << vec2.capacity() << std::endl;
 	std::cout << "vec2 size: " << vec2.size() << std::endl;
@@ -43,6 +47,21 @@ int	main(void)
 	std::cout << "vec capacity: " << vec.capacity() << std::endl;
 	std::cout << "vec size: " << vec.size() << std::endl;
 	for (it = vec.begin(); it != vec.end(); it++)
+		std::cout << *it << " ";
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	vec.swap(vec2);
+	std::cout << "vec capacity: " << vec.capacity() << std::endl;
+	std::cout << "vec size: " << vec.size() << std::endl;
+	for (it = vec.begin(); it != vec.end(); it++)
+		std::cout << *it << " ";
+	std::cout << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "vec2 capacity: " << vec2.capacity() << std::endl;
+	std::cout << "vec2 size: " << vec2.size() << std::endl;
+	for (it = vec2.begin(); it != vec2.end(); it++)
 		std::cout << *it << " ";
 	std::cout << std::endl;
 }
