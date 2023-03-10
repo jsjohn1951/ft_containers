@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/10 20:39:39 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 23:38:13 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -422,7 +422,7 @@ namespace ft
 
 			void	resize(size_type n, value_type val = value_type())
 			{
-				this->reserve(vector_arithmatic(this->capacity(), n));
+				this->reserve(n);
 				while (n > this->size())
 					this->push_back(val);
 				while (n < this->size())
