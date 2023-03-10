@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/10 23:38:13 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/11 00:39:58 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,8 @@ namespace ft
 
 			pointer		cpy_arr(const vector &x)
 			{
+				if (!x.capacity())
+					return (x.Data);
 				pointer	tmp_data = x.get_allocator().allocate(x.capacity());
 				for (size_type i = 0; i < x.size(); i++)
 					x.get_allocator().construct(tmp_data + i, x.operator[](i));
