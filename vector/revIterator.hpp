@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 16:08:03 by wismith           #+#    #+#             */
-/*   Updated: 2023/02/09 16:22:08 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 15:56:29 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define REVITERATOR_HPP
 
 #include "../utils/iterator_traits.hpp"
+#include "vectorIterator.hpp"
 
 namespace ft
 {
@@ -36,6 +37,7 @@ namespace ft
 			revIterator(){}
 			revIterator(pointer n_ptr) : ptr(n_ptr){}
 			revIterator(const revIterator &Iter) : ptr(Iter.base()){}
+			revIterator(const ft::vectorIterator<T> &Iter) : ptr(Iter.base()){}
 			//! End Constructors
 
 			//! Destructor
@@ -131,6 +133,32 @@ namespace ft
 	bool	operator!=(const revIterator<T> &Iter, const revIterator<T> &Iter2)
 	{
 		return (Iter.base() != Iter2.base());
+	}
+
+	template <class T>
+	typename ft::revIterator<T>::difference_type
+		operator-(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	{
+		return (Iter.base() - Iter2.base());
+	}
+
+	template <class T>
+	typename ft::revIterator<T>::difference_type
+		operator+(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	{
+		return (Iter.base() + Iter2.base());
+	}
+
+	template <class T>
+	bool	operator<(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	{
+		return (Iter.base() > Iter2.base());
+	}
+
+	template <class T>
+	bool	operator>(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	{
+		return (Iter.base() < Iter2.base());
 	}
 };
 

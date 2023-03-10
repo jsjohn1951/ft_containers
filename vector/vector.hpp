@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/10 11:45:37 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 20:39:39 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ namespace ft
 			explicit vector(const allocator_type& allocator = allocator_type()) : Data(NULL), Alloc(allocator), Size(0), Capacity(0){}
 
 			explicit vector(size_type n, const value_type& val = value_type(),
-				const allocator_type& alloc = allocator_type()): Alloc(alloc), Size(n), Capacity(n)
+				const allocator_type& alloc = allocator_type()): Data(NULL), Alloc(alloc), Size(0), Capacity(0)
 			{ this->assign(n, val); }
 
 			template <class InputIterator>
@@ -182,15 +182,19 @@ namespace ft
 
 			reference at(size_type n)
 			{
+				if (n >= this->size())
+					throw (ft::out_of_range());
 				return (this->operator[](n));
 			}
 
 			const_reference at(size_type n) const
 			{
+				if (n >= this->size())
+					throw (ft::out_of_range());
 				return (this->operator[](n));
 			}
 
-			bool		empty()
+			bool		empty() const
 			{
 				return (!this->size() ? true : false);
 			}
@@ -240,8 +244,8 @@ namespace ft
 
 			void		pop_back()
 			{
+				this->Alloc.destroy(this->Data + this->size() - 1);
 				this->Size--;
-				this->Alloc.destroy(this->Data + this->size());
 			}
 
 			void		reserve(size_type n)
@@ -278,6 +282,8 @@ namespace ft
 			void		assign(InputIterator first, InputIterator last,
 				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
+				if (first > last)
+					throw (ft::length_error("cannot create ft::vector larger than max_size()"));
 				difference_type n = last - first;
 				this->reserve(n);
 				this->clear();
@@ -301,6 +307,8 @@ namespace ft
 
 			iterator	erase(iterator first, iterator last)
 			{
+				if (first == last)
+					return (first);
 				for (; (last - 1) != first; last--)
 					this->erase((last - 1));
 				this->erase(first);
@@ -309,14 +317,22 @@ namespace ft
 
 			iterator	insert(iterator position, const value_type& val)
 			{
-				if (position == this->end())
-					this->push_back(val);
+				bool			atEnd = ( position == this->end() ? true : false ); 
+				difference_type	fOffset = position - this->begin();
+				difference_type	bOffset = this->end() - position;
+
+				this->reserve(vector_arithmatic(this->capacity(), this->size() + 1));
+				if (atEnd)
+						this->push_back(val);
 				else
 				{
-					this->reserve(vector_arithmatic(this->capacity(), this->size() + 1));
-					for (iterator it = this->end(); it != position; it--)
-						*it = *(it - 1);
-					*position = val;
+					difference_type	nEnd = this->size();
+					this->Alloc.construct(this->Data + nEnd, (bOffset > 0 ?
+						this->operator[](fOffset + bOffset - 1) : val));
+					for (; nEnd >= fOffset; nEnd--, bOffset--)
+						if (static_cast<size_type>(nEnd) < this->size())
+							this->operator[](nEnd) = (bOffset > 0 ?
+								this->operator[](fOffset + bOffset - 1) : val);
 					this->Size++;
 				}
 				return (position);
@@ -328,7 +344,6 @@ namespace ft
 				difference_type	fOffset = position - this->begin();
 				difference_type	bOffset = this->end() - position;
 
-				std::cout << this->capacity() << std::endl;
 				this->reserve(vector_arithmatic(this->capacity(), this->size() + n));
 				if (atEnd)
 					for (; n; n--)
@@ -337,8 +352,14 @@ namespace ft
 				{
 					difference_type	nEnd = this->size() - 1 + n;
 					for (; nEnd >= fOffset; nEnd--, bOffset--)
-						this->operator[](nEnd) = (bOffset > 0 ?
-							this->operator[](fOffset + bOffset - 1) : val);
+					{
+						if (static_cast<size_type>(nEnd) >= this->size())
+							this->Alloc.construct(this->Data + nEnd, (bOffset > 0 ?
+								this->operator[](fOffset + bOffset - 1) : val));
+						else
+							this->operator[](nEnd) = (bOffset > 0 ?
+								this->operator[](fOffset + bOffset - 1) : val);
+					}
 					this->Size += n;
 				}
 			}
@@ -387,8 +408,14 @@ namespace ft
 				{
 					difference_type	nEnd = this->size() - 1 + n;
 					for (; nEnd >= fOffset; nEnd--, bOffset--)
-						this->operator[](nEnd) = (bOffset > 0 ?
-							this->operator[](fOffset + bOffset - 1) : *(--last));
+					{
+						if (static_cast<size_type>(nEnd) >= this->size())
+							this->Alloc.construct(this->Data + nEnd, (bOffset > 0 ?
+								this->operator[](fOffset + bOffset - 1) : *(--last)));
+						else
+							this->operator[](nEnd) = (bOffset > 0 ?
+								this->operator[](fOffset + bOffset - 1) : *(--last));
+					}
 					this->Size += n;
 				}
 			}

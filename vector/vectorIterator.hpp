@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 17:20:40 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/08 22:33:22 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 16:00:35 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,25 @@ namespace ft
 		operator-(const vectorIterator<T> &Iter, const vectorIterator<U> &Iter2)
 	{
 		return (Iter.base() - Iter2.base());
+	}
+
+	template <class T, class U>
+	typename ft::vectorIterator<T>::difference_type
+		operator+(const vectorIterator<T> &Iter, const vectorIterator<U> &Iter2)
+	{
+		return (Iter.base() + Iter2.base());
+	}
+
+	template <class T>
+	bool	operator<(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	{
+		return (Iter.base() < Iter2.base());
+	}
+
+	template <class T>
+	bool	operator>(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	{
+		return (Iter.base() > Iter2.base());
 	}
 };
 
