@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/10 02:06:06 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/10 11:45:37 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include "revIterator.hpp"
 # include "../utils/type_traits.hpp"
 # include "../utils/exceptions.hpp"
+# include "../utils/algorithm.hpp"
 
 namespace ft
 {
@@ -256,7 +257,7 @@ namespace ft
 						return ;
 					}
 					pointer tmp = this->Alloc.allocate(n);
-					for (int i = 0; i < this->size(); i++)
+					for (size_type i = 0; i < this->size(); i++)
 						this->Alloc.construct(tmp + i, *(this->Data + i));
 					this->Data = this->destroyData();
 					this->Data = tmp;
@@ -419,11 +420,50 @@ namespace ft
 				x.Alloc = tmp_alloc;
 			}
 	};
-		/*
-		* @required :
-		*	relational operators
-		*	swap
-		*/
+	
+	template <class T, class Alloc>
+	void	swap(ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y)
+	{
+		x.swap(y);
+	}
+
+	template <class T, class Alloc>
+	bool	operator==(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() != rhs.size())
+			return (false);
+		return (ft::equal(lhs.begin(), lhs.end(), rhs.begin()));
+	}
+
+	template <class T, class Alloc>
+	bool	operator!=(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+	{
+		return (!(lhs == rhs));
+	}
+
+	template <class T, class Alloc>
+	bool	operator<(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+	{
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class T, class Alloc>
+	bool	operator>(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+	{
+		return (rhs < lhs);
+	}
+
+	template <class T, class Alloc>
+	bool	operator<=(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+	{
+		return (!(rhs < lhs));
+	}
+
+	template <class T, class Alloc>
+	bool	operator>=(const ft::vector<T,Alloc>& lhs, const ft::vector<T,Alloc>& rhs)
+	{
+		return (!(lhs < rhs));
+	}
 };
 
 #endif
