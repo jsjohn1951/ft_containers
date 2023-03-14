@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/13 16:01:13 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/14 16:00:13 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ namespace ft
 			~vector(){this->destroyData();}
 
 			//! End Destructor
-	
+
 		//? ------------------------------------------- Operators ------------------------------------------- ?//
 
 			vector		&operator=(const vector &vec)
@@ -107,7 +107,8 @@ namespace ft
 
 			size_type	max_size() const
 			{
-				return (this->Alloc.max_size());
+				return (std::min<size_type>(this->Alloc.max_size(),
+					std::numeric_limits<difference_type>::max()));
 			}
 
 			size_type	capacity() const
@@ -232,7 +233,7 @@ namespace ft
 					current = 1;
 				return (current);
 			}
-			
+
 		public :
 
 			void		push_back(const value_type& val)
@@ -270,7 +271,7 @@ namespace ft
 					this->Capacity = n;
 				}
 			}
-			
+
 
 			void		assign(size_type n, const value_type& val)
 			{
@@ -319,7 +320,7 @@ namespace ft
 
 			iterator	insert(iterator position, const value_type& val)
 			{
-				bool			atEnd = ( position == this->end() ? true : false ); 
+				bool			atEnd = ( position == this->end() ? true : false );
 				difference_type	fOffset = position - this->begin();
 				difference_type	bOffset = this->end() - position;
 
@@ -342,7 +343,7 @@ namespace ft
 
 			void	insert(iterator position, size_type n, const value_type& val)
 			{
-				bool			atEnd = ( position == this->end() ? true : false ); 
+				bool			atEnd = ( position == this->end() ? true : false );
 				difference_type	fOffset = position - this->begin();
 				difference_type	bOffset = this->end() - position;
 
@@ -391,7 +392,7 @@ namespace ft
 			*	@note :
 			*		because reserve may cause the reallocation of the array, any pre initialized
 			*		pointer involvement becomes useless. A solution is to calculate all the indexes before-hand and
-			*		use the indexes in the arithmatic. Which also proves to be faster. 
+			*		use the indexes in the arithmatic. Which also proves to be faster.
 			*/
 			template <class InputIterator>
 			void	insert(iterator position, InputIterator first, InputIterator last,
@@ -449,7 +450,7 @@ namespace ft
 				x.Alloc = tmp_alloc;
 			}
 	};
-	
+
 	template <class T, class Alloc>
 	void	swap(ft::vector<T,Alloc>& x, ft::vector<T,Alloc>& y)
 	{
