@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 17:20:40 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/10 16:00:35 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/13 18:36:38 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,18 @@ namespace ft
 	bool	operator>(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
 	{
 		return (Iter.base() > Iter2.base());
+	}
+
+	template <class T>
+	bool	operator<=(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	{
+		return (Iter.base() <= Iter2.base());
+	}
+
+	template <class T>
+	bool	operator>=(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	{
+		return (Iter.base() >= Iter2.base());
 	}
 };
 

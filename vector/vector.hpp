@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/11 00:39:58 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/13 16:01:13 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,7 +224,7 @@ namespace ft
 			size_type	vector_arithmatic(size_type current, size_type required)
 			{
 				if (required > this->max_size())
-					throw (ft::length_error("ft::vector"));
+					throw (ft::length_error());
 				if (current)
 					while (current < required)
 						current *= 2;
@@ -253,7 +253,7 @@ namespace ft
 			void		reserve(size_type n)
 			{
 				if (n > this->max_size())
-					throw (ft::length_error("ft::vector"));
+					throw (ft::length_error());
 				if (this->capacity() < n)
 				{
 					if (!this->capacity())
@@ -285,7 +285,7 @@ namespace ft
 				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
 				if (first > last)
-					throw (ft::length_error("cannot create ft::vector larger than max_size()"));
+					throw (ft::length_error());
 				difference_type n = last - first;
 				this->reserve(n);
 				this->clear();
