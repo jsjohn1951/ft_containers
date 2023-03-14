@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/14 16:00:13 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/15 02:47:39 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <memory>
 # include <iostream>
+# include <limits>
 
 # include "vectorIterator.hpp"
 # include "revIterator.hpp"
@@ -59,7 +60,7 @@ namespace ft
 
 			template <class InputIterator>
 			explicit vector(InputIterator start, InputIterator end, const allocator_type& allocator = allocator_type(),
-				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
+				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
 			{ this->assign(start, end); }
 
 			vector(const vector &vec) : Data(this->cpy_arr(vec)), Alloc(vec.get_allocator()),
@@ -283,11 +284,15 @@ namespace ft
 
 			template <class InputIterator>
 			void		assign(InputIterator first, InputIterator last,
-				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0)
 			{
+				size_type		n = 0;
+				InputIterator	tmp = first;
+
 				if (first > last)
 					throw (ft::length_error());
-				difference_type n = last - first;
+				for (; tmp != last; tmp++)
+					n++;
 				this->reserve(n);
 				this->clear();
 				for (; first != last; first++)
@@ -394,14 +399,19 @@ namespace ft
 			*		pointer involvement becomes useless. A solution is to calculate all the indexes before-hand and
 			*		use the indexes in the arithmatic. Which also proves to be faster.
 			*/
+		// typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0
 			template <class InputIterator>
 			void	insert(iterator position, InputIterator first, InputIterator last,
-				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0)
 			{
 				bool			atEnd = ( position == this->end() ? true : false );
 				difference_type	fOffset = position - this->begin();
 				difference_type	bOffset = this->end() - position;
-				size_type		n = static_cast<size_type>(last - first);
+				size_type		n = 0;
+				InputIterator	tmp = first;
+
+				for (; tmp != last; tmp++)
+					n++;
 
 				this->reserve(this->vector_arithmatic(this->capacity(), this->size() + n));
 				if (atEnd)
