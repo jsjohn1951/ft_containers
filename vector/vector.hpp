@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/15 02:47:39 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/15 20:05:35 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -343,7 +343,7 @@ namespace ft
 								this->operator[](fOffset + bOffset - 1) : val);
 					this->Size++;
 				}
-				return (position);
+				return (iterator(this->Data + fOffset));
 			}
 
 			void	insert(iterator position, size_type n, const value_type& val)
