@@ -5,6 +5,8 @@
 42-ft_containers_tester
 wi_container_tester
 containers_test
+common.hpp
+base.hpp
 ._*
 .Spotlight-V100
 .Trashes

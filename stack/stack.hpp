@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 23:48:55 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/11 00:36:14 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:44:03 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,10 @@ namespace ft
 	template <class T, class Container = ft::vector<T> >
 	class stack
 	{
-		typedef Container							container_type;
-		typedef T									value_type;
-		typedef typename container_type::size_type	size_type;
+		public :
+			typedef Container							container_type;
+			typedef T									value_type;
+			typedef typename container_type::size_type	size_type;
 
 		protected :
 			container_type	cont;

@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 16:28:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/10 11:40:39 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/17 13:46:24 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 # include "tree.hpp"
 # include <memory>
 # include <iostream>
+# include <limits>
+# include <stdexcept>
 
 /*
 *	@todo :
@@ -190,7 +192,8 @@ namespace ft
 
 			size_type max_size() const
 			{
-				return (this->tree->max_size());
+				return (std::min<size_type>(this->tree->max_size(),
+					std::numeric_limits<difference_type>::max()));
 			}
 
 			size_type size() const

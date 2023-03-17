@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 17:10:43 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/04 20:56:33 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/17 23:37:52 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,12 @@
 
 # include "mapIterator.hpp"
 
+
 namespace ft
 {
+	// template <class T, class Compare >
+	// class constRevMapIterator;
+
 	template <class T, class Compare >
 	class revMapIterator
 	{
@@ -41,8 +45,11 @@ namespace ft
 		public :
 			revMapIterator(): iter(), ptr() {}
 			template <class A, class Comp>
-			revMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.base()) {}
+			revMapIterator(const mapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
 			revMapIterator(pointer p) : iter(), ptr(p) {}
+
+			template <class A, class Comp>
+			revMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.base()) {}
 			~revMapIterator(){}
 
 			revMapIterator	&operator=(const revMapIterator &map)
@@ -91,7 +98,7 @@ namespace ft
 			}
 	};
 
-		template <class T, class Compare >
+	template <class T, class Compare >
 	class constRevMapIterator
 	{
 		public :
@@ -115,10 +122,15 @@ namespace ft
 		public :
 			constRevMapIterator(): iter(), ptr() {}
 			template <class A, class Comp>
-			constRevMapIterator(const constRevMapIterator<A, Comp> &map) : iter(), ptr(map.base()) {}
-			template <class A, class Comp>
 			constRevMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
+			template <class A, class Comp>
+			constRevMapIterator(const constMapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
+			template <class A, class Comp>
+			constRevMapIterator(const mapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
 			constRevMapIterator(pointer p) : iter(), ptr(p) {}
+
+			template <class A, class Comp>
+			constRevMapIterator(const constRevMapIterator<A, Comp> &map) : iter(), ptr(map.base()) {}
 
 			constRevMapIterator(const map_iter &m) : iter(m.getIter()), ptr(m.base()) {}
 			
@@ -364,6 +376,12 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	}
 
 //* ------------------------------ End const revIter / const mapIter --------------------
+
+	template<class T1, class Compare>
+	bool	operator==(const revMapIterator<T1, Compare> &mp, const typename revMapIterator<T1, Compare>::pointer ptr)
+	{
+		return (mp.base() == ptr);
+	}
 
 };
 
