@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 23:33:52 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/11 00:19:24 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:21:24 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,93 @@
 #include "stack/stack.hpp"
 #include <vector>
 #include <stack>
+#include <list>
 #include <iostream>
 #include <sys/time.h>
 #include <iomanip>
 
-# define NAMESPACE ft
-int main() {
-	timeval exec_time;
-	gettimeofday(&exec_time, NULL);
-	double start = 1.0e6 * exec_time.tv_sec + exec_time.tv_usec;
+# define TESTED_NAMESPACE ft
+# define TESTED_TYPE int
+# define T_SIZE_TYPE typename TESTED_NAMESPACE::vector<T>::size_type
+// # define NAMESPACE std
 
-	NAMESPACE::stack<int> stack;
+template <typename T>
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct);
 
-	stack.push(7);
-	stack.push(9);
-	stack.push(-3);
-	stack.push(4);
+template <typename Ite_1, typename Ite_2>
+void ft_eq_ope(const Ite_1 &first, const Ite_2 &second, const bool redo = 1)
+{
+	std::cout << *first << " vs " << *second << std::endl << std::endl;
+	std::cout << (first < second) << std::endl;
+	std::cout << (first <= second) << std::endl;
+	std::cout << (first > second) << std::endl;
+	std::cout << (first >= second) << std::endl;
+	if (redo)
+		ft_eq_ope(second, first, 0);
+}
 
-	for (;stack.size(); stack.pop())
-		std::cout << stack.top() << " ";
-	std::cout << "\n";
+int		main(void)
+{
+	const int size = 5;
+	TESTED_NAMESPACE::vector<TESTED_TYPE> vct(size);
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it_0(vct.rbegin());
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it_1(vct.rend());
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::reverse_iterator it_mid;
 
-	gettimeofday(&exec_time, NULL);
-	double end = 1.0e6 * exec_time.tv_sec + exec_time.tv_usec;
-	std::cout << std::fixed << std::setprecision(3) << (end - start) / 1000 << " ms" << std::endl;
-	return 0;
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator cit_0 = vct.rbegin();
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator cit_1;
+	TESTED_NAMESPACE::vector<TESTED_TYPE>::const_reverse_iterator cit_mid;
+
+	for (int i = size; it_0 != it_1; --i)
+		*it_0++ = i;
+	printSize(vct);
+	it_0 = vct.rbegin();
+	cit_1 = vct.rend();
+	it_mid = it_0 + 3;
+	cit_mid = it_0 + 3; cit_mid = cit_0 + 3; cit_mid = it_mid;
+
+	std::cout << std::boolalpha;
+	std::cout << ((it_0 + 3 == cit_0 + 3) && (cit_0 + 3 == it_mid)) << std::endl;
+
+	std::cout << "\t\tft_eq_ope:" << std::endl;
+	// regular it
+	// ft_eq_ope(it_0 + 3, it_mid);
+	// ft_eq_ope(it_0, it_1);
+	// ft_eq_ope(it_1 - 3, it_mid);
+	// // const it
+	// ft_eq_ope(cit_0 + 3, cit_mid);
+	// ft_eq_ope(cit_0, cit_1);
+	// ft_eq_ope(cit_1 - 3, cit_mid);
+	// // both it
+	// ft_eq_ope(it_0 + 3, cit_mid);
+	// ft_eq_ope(it_mid, cit_0 + 3);
+	// ft_eq_ope(it_0, cit_1);
+	// ft_eq_ope(it_1, cit_0);
+	// ft_eq_ope(it_1 - 3, cit_mid);
+	ft_eq_ope(it_mid, cit_1 - 3);
+
+	return (0);
+}
+
+template <typename T>
+void	printSize(TESTED_NAMESPACE::vector<T> const &vct)
+{
+	bool print_content = true;
+	// const T_SIZE_TYPE size = vct.size();
+	// const T_SIZE_TYPE capacity = vct.capacity();
+	// const std::string isCapacityOk = (capacity >= size) ? "OK" : "KO";
+	// Cannot limit capacity's max value because it's implementation dependent
+
+	// std::cout << "size: " << size << std::endl;
+	// std::cout << "capacity: " << isCapacityOk << std::endl;
+	// std::cout << "max_size: " << vct.max_size() << std::endl;
+	if (print_content)
+	{
+		typename TESTED_NAMESPACE::vector<T>::const_iterator it = vct.begin();
+		typename TESTED_NAMESPACE::vector<T>::const_iterator ite = vct.end();
+		std::cout << std::endl << "Content is:" << std::endl;
+		for (; it != ite; ++it)
+			std::cout << "- " << *it << std::endl;
+	}
+	std::cout << "###############################################" << std::endl;
 }

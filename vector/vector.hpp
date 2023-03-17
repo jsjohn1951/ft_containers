@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/15 20:05:35 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:25:20 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,14 @@
 # include <memory>
 # include <iostream>
 # include <limits>
+# include <stdexcept>
 
 # include "vectorIterator.hpp"
 # include "revIterator.hpp"
 # include "../utils/type_traits.hpp"
 # include "../utils/exceptions.hpp"
 # include "../utils/algorithm.hpp"
+# include "../utils/valid_it.hpp"
 
 namespace ft
 {
@@ -134,12 +136,12 @@ namespace ft
 
 			reverse_iterator rbegin()
 			{
-				return (this->end() - 1);
+				return (reverse_iterator(this->Data + this->size()));
 			}
 
 			const_reverse_iterator rbegin() const
 			{
-				return (this->end() - 1);
+				return (const_reverse_iterator(this->Data + this->size()));
 			}
 
 			iterator end()
@@ -154,12 +156,12 @@ namespace ft
 
 			reverse_iterator rend()
 			{
-				return (this->Data - 1);
+				return (this->Data);
 			}
 
 			const_reverse_iterator rend() const
 			{
-				return (this->Data - 1);
+				return (reverse_iterator(this->Data));
 			}
 
 			reference	front()
@@ -185,14 +187,14 @@ namespace ft
 			reference at(size_type n)
 			{
 				if (n >= this->size())
-					throw (ft::out_of_range());
+					throw (std::out_of_range(std::string("out of range")));
 				return (this->operator[](n));
 			}
 
 			const_reference at(size_type n) const
 			{
 				if (n >= this->size())
-					throw (ft::out_of_range());
+					throw (std::out_of_range(std::string("out of range")));
 				return (this->operator[](n));
 			}
 
@@ -286,11 +288,10 @@ namespace ft
 			void		assign(InputIterator first, InputIterator last,
 				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0)
 			{
-				size_type		n = 0;
-				InputIterator	tmp = first;
+				unsigned long long		n = 0;
+				InputIterator			tmp = first;
 
-				if (first > last)
-					throw (ft::length_error());
+				range_check(first, last);
 				for (; tmp != last; tmp++)
 					n++;
 				this->reserve(n);

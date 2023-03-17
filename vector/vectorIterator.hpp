@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 17:20:40 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/13 18:36:38 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/16 16:53:41 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,15 @@ namespace ft
 				return (*this->ptr);
 			}
 
+			reference	operator[](difference_type n)
+			{
+				return (this->ptr[n]);
+			}
+
 			pointer		operator->() const
 			{
 				return (this->ptr);
 			}
-
 
 			vectorIterator	operator+(difference_type n) const
 			{
@@ -149,28 +153,44 @@ namespace ft
 		return (Iter.base() + Iter2.base());
 	}
 
-	template <class T>
-	bool	operator<(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator<(const vectorIterator<T> &Iter, const vectorIterator<U> &Iter2)
 	{
 		return (Iter.base() < Iter2.base());
 	}
 
-	template <class T>
-	bool	operator>(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator>(const vectorIterator<T> &Iter, const vectorIterator<U> &Iter2)
 	{
 		return (Iter.base() > Iter2.base());
 	}
 
-	template <class T>
-	bool	operator<=(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator<=(const vectorIterator<T> &Iter, const vectorIterator<U> &Iter2)
 	{
 		return (Iter.base() <= Iter2.base());
 	}
 
-	template <class T>
-	bool	operator>=(const vectorIterator<T> &Iter, const vectorIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator>=(const vectorIterator<T> &Iter, const vectorIterator<U> &Iter2)
 	{
 		return (Iter.base() >= Iter2.base());
+	}
+
+	template <class Iterator>
+	vectorIterator<Iterator>
+	operator+(typename vectorIterator<Iterator>::difference_type n,
+		const vectorIterator<Iterator> &it)
+	{
+		return vectorIterator<Iterator>(it.base() + n);
+	}
+
+	template <class Iterator>
+	vectorIterator<Iterator>
+	operator-(typename vectorIterator<Iterator>::difference_type n,
+		const vectorIterator<Iterator> &it)
+	{
+		return vectorIterator<Iterator>(it.base() - n);
 	}
 };
 

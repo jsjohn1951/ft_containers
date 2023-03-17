@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/09 16:08:03 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/13 18:39:19 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/17 12:29:54 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ namespace ft
 			revIterator(){}
 			revIterator(pointer n_ptr) : ptr(n_ptr){}
 			revIterator(const revIterator &Iter) : ptr(Iter.base()){}
+			template <class IterType>
+			revIterator(const revIterator<IterType> &Iter) : ptr(Iter.base()) {}
 			revIterator(const ft::vectorIterator<T> &Iter) : ptr(Iter.base()){}
 			//! End Constructors
 
@@ -54,12 +56,18 @@ namespace ft
 
 			reference	operator*() const
 			{
-				return (*this->ptr);
+				pointer	tmp = this->ptr;
+				return (*(--tmp));
+			}
+
+			reference	operator[](const difference_type n)
+			{
+				return (*(*this + n));
 			}
 
 			pointer		operator->() const
 			{
-				return (this->ptr);
+				return (this->ptr - 1);
 			}
 
 
@@ -123,54 +131,76 @@ namespace ft
 			//! End Member functions
 	};
 
-	template <class T>
-	bool	operator==(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator==(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() == Iter2.base());
 	}
 
-	template <class T>
-	bool	operator!=(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator!=(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() != Iter2.base());
 	}
 
-	template <class T>
+	template <class T, class U>
 	typename ft::revIterator<T>::difference_type
-		operator-(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+		operator-(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
-		return (Iter.base() - Iter2.base());
+		return (Iter2.base() - Iter.base());
 	}
 
-	template <class T>
+	template <class T, class U>
 	typename ft::revIterator<T>::difference_type
-		operator+(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+		operator+(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() + Iter2.base());
 	}
 
-	template <class T>
-	bool	operator<(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator<(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() > Iter2.base());
 	}
 
-	template <class T>
-	bool	operator>(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator>(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() < Iter2.base());
 	}
 
-	template <class T>
-	bool	operator<=(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator<=(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() >= Iter2.base());
 	}
 
-	template <class T>
-	bool	operator>=(const revIterator<T> &Iter, const revIterator<T> &Iter2)
+	template <class T, class U>
+	bool	operator>=(const revIterator<T> &Iter, const revIterator<U> &Iter2)
 	{
 		return (Iter.base() <= Iter2.base());
+	}
+
+	template <class T>
+	revIterator<T>
+	operator+(typename revIterator<T>::difference_type n,
+		const revIterator<T> &it)
+	{
+		return revIterator<T>(it.base() - n);
+	}
+
+	template <class T>
+	revIterator<T>
+	operator-(typename revIterator<T>::difference_type n,
+		const revIterator<T> &it)
+	{
+		return revIterator<T>(it.base() + n);
+	}
+
+	template <class T>
+	bool	operator==(const vectorIterator<T> &vec, const T* t)
+	{
+		return (vec.base() == t);
 	}
 };
 

@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:26:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/08 22:57:56 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/16 02:01:14 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,62 +17,26 @@
 
 namespace ft
 {
-	class input_iterator_tag {};
-	class output_iterator_tag;
-	class forward_iterator_tag : public input_iterator_tag {};
-	class bidirectional_iterator_tag : public forward_iterator_tag {};
-	class random_access_iterator_tag : public bidirectional_iterator_tag {};
+	struct input_iterator_tag {};
+	struct output_iterator_tag {};
+	struct forward_iterator_tag : public input_iterator_tag {};
+	struct bidirectional_iterator_tag : public forward_iterator_tag {};
+	struct random_access_iterator_tag : public bidirectional_iterator_tag {};
 
 	template <class Iterator>
-	class iterator_traits
+	struct iterator_traits
 	{
-		public :
-
-			iterator_traits(){}
-			iterator_traits(const iterator_traits &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-			}
-
-			~iterator_traits(){}
-
-			iterator_traits	&operator=(const iterator_traits &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-				return (*this);
-			}
-
 			typedef typename Iterator::value_type			value_type;
 			typedef typename Iterator::difference_type		difference_type;
 			typedef typename Iterator::pointer				pointer;
-			typedef	typename Iterator::const_pointer		const_pointer;
+			typedef const pointer							const_pointer;
 			typedef typename Iterator::reference			reference;
 			typedef typename Iterator::iterator_category	iterator_category;
 	};
 
 	template <class T>
-	class iterator_traits<T*>
+	struct iterator_traits<T*>
 	{
-		public :
-
-			iterator_traits(){}
-			iterator_traits(const iterator_traits &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-			}
-
-			~iterator_traits(){}
-
-			iterator_traits	&operator=(const iterator_traits &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-				return (*this);
-			}
-
 			typedef T										value_type;
 			typedef std::ptrdiff_t							difference_type;
 			typedef T*										pointer;
@@ -81,26 +45,8 @@ namespace ft
 	};
 
 	template <class T>
-	class iterator_traits<const T*>
+	struct iterator_traits<const T*>
 	{
-		public :
-
-			iterator_traits(){}
-			iterator_traits(const iterator_traits &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-			}
-
-			~iterator_traits(){}
-
-			iterator_traits	&operator=(const iterator_traits &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-				return (*this);
-			}
-
 			typedef T										value_type;
 			typedef std::ptrdiff_t							difference_type;
 			typedef T*										pointer;
@@ -109,26 +55,8 @@ namespace ft
 	};
 
 	template <class tag, class T, class ptr = T*, class ref = T&, class diff = std::ptrdiff_t>
-	class iterator
+	struct iterator
 	{
-		public :
-
-			iterator(){}
-			iterator(const iterator &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-			}
-
-			~iterator(){}
-
-			iterator	&operator=(const iterator &iter)
-			{
-				if (this != &iter)
-					*this = iter;
-				return (*this);
-			}
-
 			typedef T										value_type;
 			typedef diff									difference_type;
 			typedef ptr										pointer;
