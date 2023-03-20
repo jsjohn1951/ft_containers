@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 17:10:43 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/17 23:37:52 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/20 22:55:54 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,21 @@
 
 namespace ft
 {
-	// template <class T, class Compare >
-	// class constRevMapIterator;
-
 	template <class T, class Compare >
 	class revMapIterator
 	{
-		public :
+		private :
 			typedef ft::iterator<ft::bidirectional_iterator_tag, T>	trait_type;
-			typedef typename trait_type::value_type					value_type;
-			typedef typename trait_type::difference_type			difference_type;
 			typedef T*												data_ptr;
 			typedef T&												data_ref;
-			typedef typename trait_type::const_pointer				const_pointer;
+			typedef ft::node_iter<T, Compare>						iterator;
+			
+		public :
+			typedef typename trait_type::value_type					value_type;
+			typedef typename trait_type::difference_type			difference_type;
 			typedef typename trait_type::reference					reference;
 			typedef typename trait_type::iterator_category			iterator_category;
 			typedef ft::node_def<T>*								pointer;
-			typedef ft::node_iter<T, Compare>						iterator;
-
-			typedef ft::mapIterator<value_type, Compare>			map_iter;
 
 		private :
 			iterator	iter;
@@ -44,12 +40,19 @@ namespace ft
 
 		public :
 			revMapIterator(): iter(), ptr() {}
+
 			template <class A, class Comp>
-			revMapIterator(const mapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
+			revMapIterator(const mapIterator<A, Comp> &map) : iter()
+			{
+				mapIterator<A, Comp>	other(map);
+				this->ptr = (--other).get_node();
+			}
+
 			revMapIterator(pointer p) : iter(), ptr(p) {}
 
 			template <class A, class Comp>
-			revMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.base()) {}
+			revMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.get_node()) {}
+
 			~revMapIterator(){}
 
 			revMapIterator	&operator=(const revMapIterator &map)
@@ -90,12 +93,12 @@ namespace ft
 				return (iter);
 			}
 
-			pointer base() const { return (this->ptr); }
-
-			iterator	getIter() const
+			mapIterator<T, Compare > base() const 
 			{
-				return (this->iter);
+				return (++mapIterator<T, Compare >(this->ptr));
 			}
+
+			pointer	get_node() const { return (this->ptr); }
 	};
 
 	template <class T, class Compare >
@@ -113,26 +116,30 @@ namespace ft
 			typedef ft::node_def<T>*								pointer;
 			typedef ft::node_iter<T, Compare>						iterator;
 
-			typedef ft::mapIterator<value_type, Compare>            map_iter;
-
 		private :
 			iterator	iter;
 			pointer		ptr;
 
 		public :
 			constRevMapIterator(): iter(), ptr() {}
+	
 			template <class A, class Comp>
-			constRevMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
+			constRevMapIterator(const revMapIterator<A, Comp> &map) : iter(), ptr(map.get_node()){}
+
 			template <class A, class Comp>
-			constRevMapIterator(const constMapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
+			constRevMapIterator(const constMapIterator<A, Comp> &map) : iter(), ptr(map.get_node()){}
+
 			template <class A, class Comp>
-			constRevMapIterator(const mapIterator<A, Comp> &map) : iter(), ptr(map.base()){}
+			constRevMapIterator(const mapIterator<A, Comp> &map) : iter()
+			{
+				mapIterator<A, Comp>	other(map);
+				this->ptr = (--other).get_node();
+			}
+
 			constRevMapIterator(pointer p) : iter(), ptr(p) {}
 
 			template <class A, class Comp>
-			constRevMapIterator(const constRevMapIterator<A, Comp> &map) : iter(), ptr(map.base()) {}
-
-			constRevMapIterator(const map_iter &m) : iter(m.getIter()), ptr(m.base()) {}
+			constRevMapIterator(const constRevMapIterator<A, Comp> &map) : iter(), ptr(map.get_node()) {}
 			
 			~constRevMapIterator(){}
 
@@ -144,6 +151,7 @@ namespace ft
 			}
 
 			data_ref operator*() const { return (*this->ptr->data); }
+
 			data_ptr operator->() const { return (this->ptr->data); }
 
 			constRevMapIterator &operator--()
@@ -174,25 +182,26 @@ namespace ft
 				return (iter);
 			}
 
-			pointer base() const { return (this->ptr); }
-
-			iterator	getIter() const
+			mapIterator<T, Compare > base() const
 			{
-				return (this->iter);
+				return (++mapIterator<T, Compare >(this->ptr));
 			}
+
+			pointer					get_node() const { return (this->ptr); }
+
 	};
 
 //* ------------------------------ revMapIter ------------------------------------------
 	template<class T1, class Compare>
 	bool	operator!=(const revMapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator==(const revMapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 //* ------------------------------ End revMapIter ---------------------------------------
@@ -202,13 +211,13 @@ namespace ft
 	template<class T1, class Compare>
 	bool	operator!=(const constRevMapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator==(const constRevMapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 //* ------------------------------ End constRev / Rev -----------------------------------
@@ -218,13 +227,13 @@ namespace ft
 	template<class T1, class Compare>
 	bool	operator!=(const revMapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator==(const revMapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 //* ------------------------------ End Rev / constRev -----------------------------------
@@ -234,13 +243,13 @@ namespace ft
 template<class T1, class Compare>
 bool	operator!=(const constRevMapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 {
-	return (mp.base() != mp2.base());
+	return (mp.get_node() != mp2.get_node());
 }
 
 template<class T1, class Compare>
 bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 {
-	return (mp.base() == mp2.base());
+	return (mp.get_node() == mp2.get_node());
 }
 
 //* ------------------------------ End constRev / constRev ------------------------------
@@ -252,13 +261,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const mapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const mapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End mapIter / revIter --------------------------------
@@ -268,13 +277,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const constMapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const constMapIterator<T1, Compare> &mp, const revMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End const mapIter / revIter ---------------------------
@@ -284,13 +293,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const mapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const mapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End mapIter / const revIter ---------------------------
@@ -300,13 +309,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const constMapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const constMapIterator<T1, Compare> &mp, const constRevMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End const mapIter / const revIter ---------------------
@@ -318,13 +327,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const revMapIterator<T1, Compare> &mp, const mapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const revMapIterator<T1, Compare> &mp, const mapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End revIter / mapIter --------------------------------
@@ -334,13 +343,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const constRevMapIterator<T1, Compare> &mp, const mapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const constRevMapIterator<T1, Compare> &mp, const mapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End const revIter / mapIter --------------------------
@@ -350,13 +359,13 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const revMapIterator<T1, Compare> &mp, const constMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const revMapIterator<T1, Compare> &mp, const constMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End revIter / const mapIter --------------------------
@@ -366,22 +375,16 @@ bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constRevMapIte
 	template<class T1, class Compare>
 	bool	operator==(const constRevMapIterator<T1, Compare> &mp, const constMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() == mp2.base());
+		return (mp.get_node() == mp2.get_node());
 	}
 
 	template<class T1, class Compare>
 	bool	operator!=(const constRevMapIterator<T1, Compare> &mp, const constMapIterator<T1, Compare> &mp2)
 	{
-		return (mp.base() != mp2.base());
+		return (mp.get_node() != mp2.get_node());
 	}
 
 //* ------------------------------ End const revIter / const mapIter --------------------
-
-	template<class T1, class Compare>
-	bool	operator==(const revMapIterator<T1, Compare> &mp, const typename revMapIterator<T1, Compare>::pointer ptr)
-	{
-		return (mp.base() == ptr);
-	}
 
 };
 
