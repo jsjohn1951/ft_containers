@@ -12,3 +12,7 @@ base.hpp
 .Trashes
 ehthumbs.db
 Thumbs.db
+root
+ft_containers-terminator
+vector_prelude.hpp
+main.cpp

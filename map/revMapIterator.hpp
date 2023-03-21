@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 17:10:43 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/20 22:55:54 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/21 13:12:43 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,10 +41,10 @@ namespace ft
 		public :
 			revMapIterator(): iter(), ptr() {}
 
-			template <class A, class Comp>
-			revMapIterator(const mapIterator<A, Comp> &map) : iter()
+			// template <class A, class Comp>
+			revMapIterator(const mapIterator<T, Compare> &map) : iter()
 			{
-				mapIterator<A, Comp>	other(map);
+				mapIterator<T, Compare>	other(map);
 				this->ptr = (--other).get_node();
 			}
 
@@ -104,17 +104,18 @@ namespace ft
 	template <class T, class Compare >
 	class constRevMapIterator
 	{
-		public :
+		private :
 			typedef ft::iterator<ft::bidirectional_iterator_tag, T>	trait_type;
-			typedef typename trait_type::value_type					value_type;
-			typedef typename trait_type::difference_type			difference_type;
 			typedef const T*										data_ptr;
 			typedef const T&										data_ref;
-			typedef typename trait_type::const_pointer				const_pointer;
+			typedef ft::node_iter<T, Compare>						iterator;
+			
+		public :
+			typedef typename trait_type::value_type					value_type;
+			typedef typename trait_type::difference_type			difference_type;
 			typedef typename trait_type::reference					reference;
 			typedef typename trait_type::iterator_category			iterator_category;
 			typedef ft::node_def<T>*								pointer;
-			typedef ft::node_iter<T, Compare>						iterator;
 
 		private :
 			iterator	iter;

@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 16:28:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/20 17:41:49 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/21 14:52:49 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,28 @@
 # include <limits>
 # include <stdexcept>
 
-/*
-*	@todo :
-*	@ Members:
-*		@require iterators:
-*		swap
-*
-*	@ Non Members:
-*		relational Operators
-*		swap
-*		
-*/
 
 namespace ft
 {
+	/*
+	*	@brief : map container with AVL tree (Self balancing binary tree), AVL tree was named after 
+	*				Adelson-Velsky and Landis.
+	*	@note :
+	*		more efficient than array container (e.g. vector, deque, etc...) because
+	*			instead of iterating through entire array, with a binary tree we have the ability
+	*			to start at the root of the tree, and descend down one branch using comparisons.
+	*	@example :
+	*		to find 5 in the below tree we know that 5 < 6 and 5 > 3, so starting at the root (6), we know to go
+	*			to the left child (3) because 5 < 6. From 3 we know to go to the right child (5) because 5 > 3.
+	*	@visual :
+	*                 6   
+	*              /    \
+	*            3       9
+	*          /  \     / \
+	*		 -4   5   7   12
+	*		         /     \
+	*			    4      13		
+	*/
 	template < class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key,T> > >
 	class map
 	{
@@ -93,12 +101,16 @@ namespace ft
 					typedef value_type first_argument_type;
 					typedef value_type second_argument_type;
 					bool operator() (const value_type& x, const value_type& y) const
-					{
-						return comp(x.first, y.first);
-					}
+					{ return comp(x.first, y.first); }
 			};
 
 			//! Constructors
+			/*
+			*	@brief : default constructor, allocates a new tree
+			*	@note :
+			*		takes default arguments set to the Compare obj and allocator_type.
+			*		does not require any arguments to be called.
+			*/
 			explicit	map(const Compare &_cmp = Compare(), const allocator_type &_alloc = allocator_type()) :
 				alloc(_alloc), cmp(_cmp), Size(0), tree()
 			{
@@ -106,6 +118,14 @@ namespace ft
 				this->treeAlloc.construct(this->tree, tree_type());
 			}
 
+			/*
+			*	@brief : Copy constructor, allocates a new tree
+			*	@note :
+			*		takes the tree to be copied as an argument.
+			*		sets the allocator and compare object to the tree to be copied's allocator and compare.
+			*		Allocates, and constructs a new tree, before copying the tree using private
+			*			function tree_cpy which takes the root of the tree to be copied as an argument.
+			*/
 			map (const map& x) : alloc(x.get_allocator()), cmp(x.key_comp()), Size(0), tree()
 			{
 				this->tree = this->treeAlloc.allocate(1);
@@ -113,6 +133,15 @@ namespace ft
 				this->tree_cpy(x.tree->getRoot());
 			}
 
+			/*
+			*	@brief : range constructor, allocates a new tree
+			*	@note :
+			*		takes first and last as required arguments, followed by default arguments
+			*			for the compare object and allocator.
+			*		Allocates and constructs a new tree
+			*		iterates through the range from first to last, inserting a new ft::pair<>
+			*			returned by ft::make_pair<> using the tree's value insert function.
+			*/
 			template <class InputIterator>
 			map (InputIterator first, InputIterator last,
 				const key_compare& _cmp = key_compare(), const allocator_type& _alloc = allocator_type()) :
@@ -126,6 +155,14 @@ namespace ft
 			}
 
 			//! Assignment Operator
+			/*
+			*	@brief : Assignment operator overload
+			*	@note :
+			*		destroys and deallocates the current tree.
+			*		Allocates and constucts a new tree.
+			*		Uses private member function tree_cpy() to copy the 
+			*			elements from the tree to be copied within map.
+			*/
 			map	&operator=(const map &x)
 			{
 				if (this != &x)
@@ -140,6 +177,9 @@ namespace ft
 			}
 
 			//! Destructor
+			/*
+			*	@brief : destroys and deallocates the current tree befor destructing the map
+			*/
 			~map()
 			{
 				this->treeAlloc.destroy(this->tree);
@@ -162,17 +202,39 @@ namespace ft
 				return (node->data->second);
 			}
 
+			/*
+			*	@brief : calls the tree's destroyTree() function
+			*	@note : 
+			*			tree's destroyTree() function uses recursion to destroy and deallocate each node
+			*				within the tree, decreasing size by 1 at each node.
+			*			Ends with size = 0
+			*/
 			void clear()
 			{
 				tree->destroyTree();
 			}
 
+			/*
+			*	@brief : count function counts how many elements of certain type of key
+			*	@note :
+			*		count will never return more size_type greater than 1 in map container
+			*			due to the fact that there can never be more than one element with the same
+			*				key inserted.
+			*		Uses the tree's search() function which returns a pointer to the node, or NULL.
+			*		returns 1 if node is not NULL, and 0 if it is.
+			*/
 			size_type	count(const key_type& k) const
 			{
 				node_ptr	node = this->tree->search(ft::pair<key_type, mapped_type>(k,mapped_type()));
 				return (node ? 1 : 0);
 			}
-
+			
+			/*
+			*	@brief : empty returns a boolean
+			*	@note :
+			*		returns true if the size of the tree is 0, and
+			*			false if it is greater than 0.
+			*/
 			bool empty() const
 			{
 				if (!tree->size())
