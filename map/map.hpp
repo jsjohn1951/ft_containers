@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 16:28:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/22 19:24:54 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/23 13:20:17 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -391,8 +391,18 @@ namespace ft
 			*/
 			ft::pair<const_iterator,const_iterator>	equal_range(const key_type& k)	const
 			{
-				const_iterator	first  = this->lower_bound(k);
-				const_iterator	second = this->upper_bound(k);
+				const_iterator	first;
+				const_iterator	second;
+				if (this->size())
+				{
+					first = this->lower_bound(k);
+					second = this->upper_bound(k);
+				}
+				else
+				{
+					first = this->end();
+					second = this->end();
+				}
 				return (ft::make_pair(first, second));
 			}
 
