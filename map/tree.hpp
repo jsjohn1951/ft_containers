@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/24 18:26:06 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/17 16:37:24 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/24 17:09:00 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@
 # include <memory>
 # include <iostream>
 
-# define left 1
-# define right 2
+# define left_flag 1
+# define right_flag 2
 
 namespace ft
 {
@@ -106,28 +106,28 @@ namespace ft
 				pointer node = NULL;
 				if (_insert)
 				{
-					this->init_leftRight(this->min(this->root), NULL, left);
-					this->init_leftRight(this->max(this->root), NULL, right);
+					this->init_leftRight(this->min(this->root), NULL, left_flag);
+					this->init_leftRight(this->max(this->root), NULL, right_flag);
 					{
 						node = this->newNode(this->newValue(val));
 						this->root = this->insertNode(this->root, node);
 						this->Size++;
 						this->setPrevVar(this->root, NULL);
 					}
-					this->init_leftRight(this->min(this->root), this->nullNode1, left);
-					this->init_leftRight(this->max(this->root), this->nullNode2, right);
+					this->init_leftRight(this->min(this->root), this->nullNode1, left_flag);
+					this->init_leftRight(this->max(this->root), this->nullNode2, right_flag);
 				}
 				return (node);
 			}
 
 			void	destroyElement(const value_type &val)
 			{
-				this->init_leftRight(this->min(this->root), NULL, left);
-				this->init_leftRight(this->max(this->root), NULL, right);
+				this->init_leftRight(this->min(this->root), NULL, left_flag);
+				this->init_leftRight(this->max(this->root), NULL, right_flag);
 				this->root = this->deleteNode(this->root, val);
 				this->setPrevVar(this->root, NULL);
-				this->init_leftRight(this->min(this->root), this->nullNode1, left);
-				this->init_leftRight(this->max(this->root), this->nullNode2, right);
+				this->init_leftRight(this->min(this->root), this->nullNode1, left_flag);
+				this->init_leftRight(this->max(this->root), this->nullNode2, right_flag);
 			}
 
 			void	destroyTree()
@@ -435,9 +435,9 @@ namespace ft
 				{
 					if (ptr)
 						ptr->prev = node;
-					if (flag == left)
+					if (flag == left_flag)
 						node->lChld = ptr;
-					else if (flag == right)
+					else if (flag == right_flag)
 						node->rChld = ptr;
 				}
 			}

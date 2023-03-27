@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 17:10:43 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/21 13:12:43 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/24 18:41:44 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ namespace ft
 			typedef T*												data_ptr;
 			typedef T&												data_ref;
 			typedef ft::node_iter<T, Compare>						iterator;
-			
+
 		public :
 			typedef typename trait_type::value_type					value_type;
 			typedef typename trait_type::difference_type			difference_type;

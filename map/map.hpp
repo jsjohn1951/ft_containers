@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 16:28:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/23 13:20:17 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/24 18:46:41 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -294,17 +294,18 @@ namespace ft
 				return (reverse_iterator(this->tree->end()));
 			}
 
+			const_reverse_iterator	rbegin() const
+			{
+				if (!this->tree->size())
+					return (this->rend());
+				return (const_reverse_iterator(this->tree->end()));
+			}
+
 			reverse_iterator	rend()
 			{
 				return (reverse_iterator(this->tree->tmin()));
 			}
 
-			const_reverse_iterator	rbegin() const
-			{
-				if (!this->tree->size())
-					return (this->rend());
-				return (reverse_iterator(this->tree->end()));
-			}
 
 			const_reverse_iterator	rend() const
 			{

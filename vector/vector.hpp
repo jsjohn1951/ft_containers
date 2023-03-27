@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/17 12:25:20 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/27 17:07:22 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,8 +65,9 @@ namespace ft
 				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
 			{ this->assign(start, end); }
 
-			vector(const vector &vec) : Data(this->cpy_arr(vec)), Alloc(vec.get_allocator()),
-				Size(vec.size()), Capacity(vec.size()) {}
+			vector(const vector &vec) : Alloc(vec.get_allocator()),
+				Size(vec.size()), Capacity(vec.size())
+			{ this->Data = this->cpy_arr(vec); }
 
 			//! End Constructors
 
@@ -82,10 +83,14 @@ namespace ft
 			{
 				if (this != &vec)
 				{
+					size_type	tmp = this->capacity();
 					this->destroyData();
+					if (vec.size() >= tmp)
+						this->Capacity = vec.size();
+					else
+						this->Capacity = tmp;
 					this->Data = this->cpy_arr(vec);
 					this->Size = vec.size();
-					this->Capacity = vec.capacity();
 				}
 				return (*this);
 			}
@@ -207,9 +212,9 @@ namespace ft
 
 			pointer		cpy_arr(const vector &x)
 			{
+				pointer	tmp_data = x.get_allocator().allocate(this->capacity());
 				if (!x.capacity())
-					return (x.Data);
-				pointer	tmp_data = x.get_allocator().allocate(x.capacity());
+					return (tmp_data);
 				for (size_type i = 0; i < x.size(); i++)
 					x.get_allocator().construct(tmp_data + i, x.operator[](i));
 				return (tmp_data);
