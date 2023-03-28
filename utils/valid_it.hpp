@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 01:30:14 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/16 01:58:15 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 01:45:35 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,48 +14,18 @@
 # define VALID_IT_HPP
 
 # include "iterator_traits.hpp"
+# include "type_traits.hpp"
 # include <iterator>
 # include <stdexcept>
 
 namespace ft
 {
 	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename std::input_iterator_tag)
+	void	is_valid(InputIter first, InputIter last, typename ft::input_iterator_tag)
 	{ (void) first; (void) last; }
 
 	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename std::output_iterator_tag)
-	{ (void) first; (void) last; }
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename std::forward_iterator_tag)
-	{ (void) first; (void) last; }
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename std::bidirectional_iterator_tag)
-	{ (void) first; (void) last; }
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename std::random_access_iterator_tag)
-	{
-		if (first > last)
-			throw (std::length_error("cannot create ft::vector larger than max_size()"));
-	}
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename ft::input_iterator_tag)
-	{ (void) first; (void) last; }
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename ft::output_iterator_tag)
-	{ (void) first; (void) last; }
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename ft::forward_iterator_tag)
-	{ (void) first; (void) last; }
-
-	template <class InputIter>
-	void	is_valid(InputIter first , InputIter last, typename ft::bidirectional_iterator_tag)
+	void	is_valid(InputIter first, InputIter last, typename std::input_iterator_tag)
 	{ (void) first; (void) last; }
 
 	template <class InputIter>
@@ -65,6 +35,18 @@ namespace ft
 			throw (std::length_error("cannot create ft::vector larger than max_size()"));
 	}
 
+	template <class InputIter>
+	void	is_valid(InputIter first , InputIter last, typename std::random_access_iterator_tag)
+	{
+		if (first > last)
+			throw (std::length_error("cannot create ft::vector larger than max_size()"));
+	}
+
+	/*
+	*	@brief : calls an is_valid function which is overloaded with iter_tags
+	*	@note :
+	*		the is_valid function throws std::length_error if first > last
+	*/
 	template <class InputIter>
 	void	range_check(InputIter first, InputIter last)
 	{

@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/27 17:07:22 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 02:49:38 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@
 # include "vectorIterator.hpp"
 # include "revIterator.hpp"
 # include "../utils/type_traits.hpp"
-# include "../utils/exceptions.hpp"
 # include "../utils/algorithm.hpp"
 # include "../utils/valid_it.hpp"
 
@@ -113,6 +112,15 @@ namespace ft
 				return (this->Size);
 			}
 
+			/*
+			*	@brief : returns the min value between the allocator's max_size()
+			*		and numeric_limits max with difference_type as template argument.
+			*	@note :
+			*		difference_type is often synonymous with std::ptrdiff_t which is used for
+			*			pointer arithmetic.
+			*	@source :
+			*		https://en.cppreference.com/w/cpp/types/ptrdiff_t
+			*/
 			size_type	max_size() const
 			{
 				return (std::min<size_type>(this->Alloc.max_size(),
@@ -212,9 +220,9 @@ namespace ft
 
 			pointer		cpy_arr(const vector &x)
 			{
-				pointer	tmp_data = x.get_allocator().allocate(this->capacity());
 				if (!x.capacity())
-					return (tmp_data);
+					return (NULL);
+				pointer	tmp_data = x.get_allocator().allocate(this->capacity());
 				for (size_type i = 0; i < x.size(); i++)
 					x.get_allocator().construct(tmp_data + i, x.operator[](i));
 				return (tmp_data);
@@ -233,7 +241,7 @@ namespace ft
 			size_type	vector_arithmatic(size_type current, size_type required)
 			{
 				if (required > this->max_size())
-					throw (ft::length_error());
+					throw (std::length_error("cannot create ft::vector larger than max_size()"));
 				if (current)
 					while (current < required)
 						current *= 2;
@@ -262,7 +270,7 @@ namespace ft
 			void		reserve(size_type n)
 			{
 				if (n > this->max_size())
-					throw (ft::length_error());
+					throw (std::length_error("cannot create ft::vector larger than max_size()"));
 				if (this->capacity() < n)
 				{
 					if (!this->capacity())

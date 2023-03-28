@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 16:28:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/24 18:46:41 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 02:54:09 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,10 @@
 
 # include "../utils/algorithm.hpp"
 # include "../utils/utility.hpp"
-# include "../utils/exceptions.hpp"
 # include "../utils/functional.hpp"
+# include "../vector/vector.hpp"
 # include "mapIterator.hpp"
 # include "revMapIterator.hpp"
-# include "../vector/vector.hpp"
 # include "tree.hpp"
 # include <memory>
 # include <iostream>
