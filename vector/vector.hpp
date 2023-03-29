@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/05 22:29:25 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/29 02:49:38 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 15:36:42 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <iostream>
 # include <limits>
 # include <stdexcept>
+# include <cstddef>
+# include <tgmath.h>
 
 # include "vectorIterator.hpp"
 # include "revIterator.hpp"
@@ -52,6 +54,13 @@ namespace ft
 
 		public :
 
+			/*
+			*	@brief : explicit keyword is used in constructors so types are not implicitly
+			*		converted in c++
+			*	@sources :
+			*		https://www.geeksforgeeks.org/use-of-explicit-keyword-in-cpp/
+			*/
+
 			//! Constructors
 			explicit vector(const allocator_type& allocator = allocator_type()) : Data(NULL), Alloc(allocator), Size(0), Capacity(0){}
 
@@ -61,7 +70,7 @@ namespace ft
 
 			template <class InputIterator>
 			explicit vector(InputIterator start, InputIterator end, const allocator_type& allocator = allocator_type(),
-				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) : Data(NULL), Alloc(allocator), Size(0), Capacity(0)
 			{ this->assign(start, end); }
 
 			vector(const vector &vec) : Alloc(vec.get_allocator()),
@@ -127,31 +136,51 @@ namespace ft
 					std::numeric_limits<difference_type>::max()));
 			}
 
+			/*
+			*	@brief : returns the current allocated size for array
+			*/
 			size_type	capacity() const
 			{
 				return (this->Capacity);
 			}
 
+			/*
+			*	@brief : returns the allocator
+			*/
 			allocator_type	get_allocator() const
 			{
 				return (this->Alloc);
 			}
 
+			/*
+			*	@brief : returns an iterator that points to first element in the array
+			*/
 			iterator begin()
 			{
-				return (this->Data);
+				return (iterator(this->Data));
 			}
 
+			/*
+			*	@brief : returns a const_iterator that points to first element in the array
+			*/
 			const_iterator begin() const
 			{
-				return (this->Data);
+				return (const_iterator(this->Data));
 			}
 
+			/*
+			*	@brief : returns a reverse_iterator that points to (first element + size) of
+			*		container. Taking into account reverse_iterators have an offset of +/- 1
+			*/
 			reverse_iterator rbegin()
 			{
 				return (reverse_iterator(this->Data + this->size()));
 			}
 
+			/*
+			*	@brief : returns a reverse_iterator that points to (first element + size) of
+			*		container. Taking into account reverse_iterators have an offset of +/- 1
+			*/
 			const_reverse_iterator rbegin() const
 			{
 				return (const_reverse_iterator(this->Data + this->size()));
@@ -159,22 +188,22 @@ namespace ft
 
 			iterator end()
 			{
-				return (this->Data + this->size());
+				return (iterator(this->Data + this->size()));
 			}
 
 			const_iterator end() const
 			{
-				return (this->Data + this->size());
+				return (const_iterator(this->Data + this->size()));
 			}
 
 			reverse_iterator rend()
 			{
-				return (this->Data);
+				return (reverse_iterator(this->Data));
 			}
 
 			const_reverse_iterator rend() const
 			{
-				return (reverse_iterator(this->Data));
+				return (const_reverse_iterator(this->Data));
 			}
 
 			reference	front()
@@ -217,7 +246,17 @@ namespace ft
 			}
 
 		private :
-
+		
+			/*
+			*	@brief : copies elements from vector x to a tmp array before returning the tmp
+			*	@note :
+			*		if the vector being copied has a capacity of 0, the function returns NULL
+			*			otherwise it uses the allocator from the vector being copied to allocate the
+			*				new array and proceeds to construct the elements using the vector's [] operator
+			*					to retrieve the values.
+			*	@use :
+			*		is mainly used in the = operator overload, and the copy constructor
+			*/
 			pointer		cpy_arr(const vector &x)
 			{
 				if (!x.capacity())
@@ -228,6 +267,11 @@ namespace ft
 				return (tmp_data);
 			}
 
+			/*
+			*	@brief : destroys each element within the vector array before deallocating
+			*	@note :
+			*		Will set Capacity to 0 because the array is deallocated, and return NULL
+			*/
 			pointer		destroyData()
 			{
 				size_type	n = this->Size;
@@ -238,6 +282,16 @@ namespace ft
 				return (NULL);
 			}
 
+			/*
+			*	@brief : returns the proper size to allocate for the array.
+			*	@note :
+			*		1. current is synonymous with vector capacity
+			*		2. required is the minimum required capacity
+			*		if required is greater than max_size() function throws a
+			*		length_error exception.
+			*		The current is multiplied by 2 untill it is greater than / or equal to
+			*			required.
+			*/
 			size_type	vector_arithmatic(size_type current, size_type required)
 			{
 				if (required > this->max_size())
@@ -251,7 +305,13 @@ namespace ft
 			}
 
 		public :
-
+			
+			/*
+			*	@brief : pushes one element to the back of the array
+			*	@note :
+			*		reserve is called to ensure that reallocation happens
+			*			only if size has reached capacity and is about to exceed capacity.
+			*/
 			void		push_back(const value_type& val)
 			{
 				if (this->size() == this->capacity())
@@ -261,12 +321,24 @@ namespace ft
 				this->Size++;
 			}
 
+			/*
+			*	@brief : destroys last element and decreases size by 1
+			*	@note :
+			*		capacity remains unaffected by this operation
+			*/
 			void		pop_back()
 			{
 				this->Alloc.destroy(this->Data + this->size() - 1);
 				this->Size--;
 			}
 
+			/*
+			*	@brief : ensures that n allocation size is reserved
+			*	@note :
+			*		Reallocation happens when n is greater than the current capacity of the vector.
+			*		If n exceeds max_size, a length_error exception is thrown.
+			*		If n is less than capacity, no changes will occur in the vector.
+			*/
 			void		reserve(size_type n)
 			{
 				if (n > this->max_size())
@@ -288,18 +360,30 @@ namespace ft
 				}
 			}
 
-
+			/*
+			*	@brief : clears the vector before reserving a size of n, and filling the array with val for
+			*		size of n elements
+			*/
 			void		assign(size_type n, const value_type& val)
 			{
-				this->reserve(n);
 				this->clear();
+				this->reserve(n);
 				for (size_type i = 0; i < n; i++)
 					this->push_back(val);
 			}
 
+			/*
+			*	@brief : clears the vector and reserves a size of n (num of elements between)
+			*		first and last iterators.
+			*	@note :
+			*		Uses the concept of SFINAE (Substitution Failure Is Not An Error) to call the
+			*			function IF the iterators are not integral types.
+			*		Calls range_check function to do relational check if the iterators have random_access_iterator_tags.
+			*			(only random access iterators have relational operators (> < <= >= ==, etc...)).
+			*/
 			template <class InputIterator>
 			void		assign(InputIterator first, InputIterator last,
-				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0)
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
 			{
 				unsigned long long		n = 0;
 				InputIterator			tmp = first;
@@ -307,18 +391,35 @@ namespace ft
 				range_check(first, last);
 				for (; tmp != last; tmp++)
 					n++;
-				this->reserve(n);
 				this->clear();
+				this->reserve(n);
 				for (; first != last; first++)
 					this->push_back(*first);
 			}
 
+			/*
+			*	@brief : will pop each element from the vector until empty
+			*	@note :
+			*		capacity remains unaffected.
+			*/
 			void		clear()
 			{
 				while (!this->empty())
 					this->pop_back();
 			}
 
+			/*
+			*	@brief : removes a single element from the vector
+			*	@note :
+			*		Starting from position, copies each element one forward, then pop's the back.
+			*	@example :
+			*		position = 5
+			*				   ^ ^ ^ ^ ^
+			*		0 1 2 3 4 5 6 7 8 9
+			*		after copy :
+			*		0 1 2 3 4 6 7 8 9 (0) <- pop_back()
+			*				    
+			*/
 			iterator	erase(iterator position)
 			{
 				for (iterator it = position; it != this->end() - 1; it++)
@@ -327,6 +428,14 @@ namespace ft
 				return (position);
 			}
 
+			/*
+			*	@brief : erases a range of elements from the vector array
+			*	@note :
+			*		calls the position erase function on the elements starting from
+			*			last - 1, then moving back until (last - 1) == first
+			*		finishes by erasing first, and returning the element currently in the 
+			*			first position.
+			*/
 			iterator	erase(iterator first, iterator last)
 			{
 				if (first == last)
@@ -337,6 +446,9 @@ namespace ft
 				return (first);
 			}
 
+			/*
+			*	@brief : 
+			*/
 			iterator	insert(iterator position, const value_type& val)
 			{
 				bool			atEnd = ( position == this->end() ? true : false );
@@ -413,10 +525,9 @@ namespace ft
 			*		pointer involvement becomes useless. A solution is to calculate all the indexes before-hand and
 			*		use the indexes in the arithmatic. Which also proves to be faster.
 			*/
-		// typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0
 			template <class InputIterator>
 			void	insert(iterator position, InputIterator first, InputIterator last,
-				typename ft::enable_if<!std::numeric_limits<InputIterator>::is_integer, InputIterator>::type* = 0)
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL)
 			{
 				bool			atEnd = ( position == this->end() ? true : false );
 				difference_type	fOffset = position - this->begin();

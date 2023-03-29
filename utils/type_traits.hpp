@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/26 15:08:34 by wismith           #+#    #+#             */
-/*   Updated: 2023/01/27 12:46:11 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 12:38:30 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define TYPE_TRAITS_HPP
 
 # include <iostream>
+
+/*
+*	@brief : concept SFINAE (Substitution Failure Is Not An Error)
+*	@example :
+*		used in vector range functions to deduce if the iterators are indeed
+*			iterators by checking if the iterators are integral.
+*/
 
 namespace ft
 {
@@ -23,8 +30,15 @@ namespace ft
 	template <class T>
 	struct enable_if<true, T>{typedef T type;};
 
+	/*
+	*	@brief : generic is_integral has a const bool value of false
+	*/
 	template <class T>
 	struct is_integral{static const bool value = false;};
+
+	/*
+	*	@brief : template specializations of is_integral has a const bool value of true
+	*/
 
 	template <>
 	struct is_integral<bool>{static const bool value = true;};

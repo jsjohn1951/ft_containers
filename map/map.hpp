@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 16:28:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/29 02:54:09 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 15:18:08 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,10 @@ namespace ft
 			class value_compare : public ft::binary_function<value_type,value_type,bool>
 			{
 				private :
+					/*
+					*	@brief : friend is used for map to be able to be able to access private and
+					*		protected members.
+					*/
 					friend class map;
 					protected:
 					Compare comp;

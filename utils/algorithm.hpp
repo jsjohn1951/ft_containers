@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/12 14:39:44 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/29 02:28:29 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 12:07:33 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,34 @@
 
 namespace ft
 {
-	template <class InputIterator1, class InputIterator2>
-	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2)
+	/*
+	*	@brief : compares each iteration of two iterators
+	*	@note :
+	*		Given first and last of iter1, and first of iter2 as arguments, 
+	*			the function will increment iter1's first
+	*			and iter2's first, and compares each iteration.
+	*		The first iteration that is != will cause the function to return a false.
+	*/
+	template <class InputIter1, class InputIter2>
+	bool	equal(InputIter1 first1, InputIter1 last1, InputIter2 first2)
 	{
-		InputIterator1 fst = first1;
-		InputIterator2 fst2 = first2;
-		while (fst != last1)
-		{
-			if (*fst != *fst2)
+		for (;first1 != last1; first1++, first2++)
+			if (*first1 != *first2)
 				return (false);
-			fst++;
-			fst2++;
-		}
 		return (true);
 	}
 
-	template <class InputIterator1, class InputIterator2, class BinaryPredicate>
-	bool equal (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, BinaryPredicate pred)
+	/*
+	*	@brief : overload substitutes the != operator for a pred.
+	*	@note :
+	*		pred is a function.
+	*/
+	template <class InputIter1, class InputIter2, class BP>
+	bool	equal(InputIter1 first1, InputIter1 last1, InputIter2 first2, BP pred)
 	{
-		InputIterator1 fst = first1;
-		InputIterator2 fst2 = first2;
-		while (fst != last1)
-		{
-			if (!pred(*fst, *fst2))
+		for (;first1 != last1; first1++, first2++)
+			if (!pred(*first1, *first2))
 				return (false);
-			fst++;
-			fst2++;
-		}
 		return (true);
 	}
 

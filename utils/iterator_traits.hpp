@@ -6,7 +6,7 @@
 /*   By: wismith <wismith@42ABUDHABI.AE>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/17 16:26:53 by wismith           #+#    #+#             */
-/*   Updated: 2023/03/28 22:56:57 by wismith          ###   ########.fr       */
+/*   Updated: 2023/03/29 12:14:56 by wismith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,14 @@ namespace ft
 //! ----------------------- End Iterator tags -------------------------- !//
 
 //* ----------------------- Iterator Traits ---------------------------- *//
+	/*
+	*	@brief : Iterator traits define properties of iterators
+	*	@note :
+	*		for every iterator type there is a corresponding iterator specialization
+	*			of iterator_traits.
+	*	@sources :
+	*		https://cplusplus.com/reference/iterator/iterator_traits/
+	*/
 	template <class Iterator>
 	struct iterator_traits
 	{
